@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public enum Sounds
-{   
+{
     Shoot,
     Heal,
     TakeDamage,
@@ -13,31 +13,33 @@ public enum Sounds
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager instance;
-    public AudioClip[] Clips;
-    [SerializeField] private AudioSource MusicSource, EffectsSource;
-    
+    public static SoundManager instance; // Static instance of the SoundManager class
+    public AudioClip[] Clips; // Array of audio clips for different sounds
+    [SerializeField] private AudioSource MusicSource, EffectsSource; // Audio sources for music and sound effects
+
     private void Awake()
     {
         if (instance == null)
         {
-            instance = this;
-            DontDestroyOnLoad(this);
+            instance = this; // Set the static instance to this instance if it is null
+            DontDestroyOnLoad(this); // Don't destroy the SoundManager when a new scene is loaded
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Destroy the duplicate SoundManager instance
         }
     }
 
     private void Start()
     {
-        
+        // Code to execute at the start
     }
 
     public void SliderIndexer(int index, float value)
     {
-        switch (index) {
+        // Adjust the volume based on the slider index
+        switch (index)
+        {
             case 0:
                 ChangeMasterVolume(value);
                 break;
@@ -52,7 +54,9 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(Sounds sound)
     {
-        switch(sound) {
+        // Play the specified sound effect
+        switch (sound)
+        {
             case Sounds.Shoot:
                 EffectsSource.PlayOneShot(Clips[0]);
                 break;
@@ -70,17 +74,19 @@ public class SoundManager : MonoBehaviour
 
     public void ChangeMasterVolume(float value)
     {
+        // Adjust the master volume
         AudioListener.volume = value;
     }
 
     public void ChangeMusicVolume(float value)
     {
+        // Adjust the music volume
         MusicSource.volume = value;
     }
 
     public void ChangeEffectsVolume(float value)
     {
+        // Adjust the sound effects volume
         EffectsSource.volume = value;
     }
-
 }
