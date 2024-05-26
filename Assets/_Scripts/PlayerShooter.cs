@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class PlayerShooter : MonoBehaviour
@@ -10,6 +11,8 @@ public class PlayerShooter : MonoBehaviour
     private int currentAmmo; // Current ammo count
     public int CurrentAmmo => currentAmmo; // Public property to access current ammo count
     private bool isReloading = false; // Flag for reloading
+    private bool isJammed = false; // Flag for jammed, true then it is jammed, false then it is not
+    public GameObject jammedPrefab; // The prefab for when it is jammed
 
     private void Start()
     {
@@ -21,10 +24,18 @@ public class PlayerShooter : MonoBehaviour
         // Check for input to shoot only if not reloading, ammo available, and game is in progress
         if (Input.GetKeyDown(KeyCode.Mouse0) && !isReloading && currentAmmo > 0 && GameManager.instance.GetGameStatus())
         {
-            if (!IsJamming())
+            if (!isJammed)
             {
-                Shoot(); // Shoot a bullet
-                currentAmmo--; // Reduce the current ammo count by 1
+                isJammed = IsJamming();
+                if (isJammed)
+                {
+                    StartJamming();
+                }
+            }
+            if (!isJammed)
+            {
+                Shoot(); // Shoots a bullet
+                currentAmmo--; // Reduces the current ammo count by 1
             }
 
             if (currentAmmo == 0)
@@ -53,6 +64,21 @@ public class PlayerShooter : MonoBehaviour
         // Probability of jamming: 25%
         float jammingProbability = 0.25f;
         return Random.value < jammingProbability;
+    }
+
+    private void StartJamming()
+    {
+        //
+        GameObject JamObject = Instantiate(jammedPrefab, transform.position, Quaternion.identity);
+        JamObject.transform.parent = GameObject.Find("Canvas").transform;
+        float xpos = Random.Range(0, Screen.width);
+        float ypos = Random.Range(0, Screen.height);
+        JamObject.transform.position = new Vector3(xpos, ypos, 0);
+    }
+
+    public void StopJamming()
+    {
+        isJammed = false;
     }
 }
 
